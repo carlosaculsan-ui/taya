@@ -393,10 +393,10 @@ body {
 }
 .gameover-stat-label {
   font-family: 'Paytone One', sans-serif;
-  font-size: 0.52rem;
+  font-size: 0.75rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  opacity: 0.42;
+  opacity: 0.52;
   margin-bottom: 0.15rem;
 }
 .gameover-num {
@@ -480,6 +480,18 @@ body {
   margin: 0 auto;
   padding: 0.75rem 1rem;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Landscape / short-viewport compact mode ────────────────── */
+@media (max-height: 500px) {
+  .perya-card {
+    min-height: 7rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  .card-value  { font-size: 1.5rem; }
+  .card-hidden { font-size: 1.8rem; }
+  .vs-badge    { font-size: 1rem; }
+  .question-hint { display: none; }
 }
 
 /* ── Confetti ───────────────────────────────────────────────── */

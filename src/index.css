@@ -378,6 +378,7 @@ body {
   border: 1.5px solid rgba(255,243,176,0.2);
   background: transparent;
   transition: all 0.15s ease;
+  pointer-events: none;
 }
 .progress-dot.answered { background: var(--yellow); border-color: var(--yellow); }
 .progress-dot.current  { border-color: rgba(255,243,176,0.72); }
@@ -463,6 +464,13 @@ body {
 .lifeline-btn:hover {
   color: var(--yellow);
   border-color: rgba(255, 209, 0, 0.7);
+}
+.lifeline-used {
+  font-family: 'Paytone One', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 209, 0, 0.28);
 }
 
 /* ── Fixed CTA bar (TAAS/BABA + Susunod always on-screen) ──── */

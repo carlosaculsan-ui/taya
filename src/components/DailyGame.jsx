@@ -65,6 +65,11 @@ export default function DailyGame({ categories, onHome }) {
     setLifelineDisplay({ stats });
   }, [lifelineUsed, lifelineDisplay, dayNumber, idx, lifelineKey]);
 
+  const handleNext = useCallback(() => {
+    next();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [next]);
+
   const handleShare = async () => {
     try {
       if (navigator.share) {
@@ -99,8 +104,8 @@ export default function DailyGame({ categories, onHome }) {
         {/* ── Playing / Revealed ── */}
         {(phase === 'playing' || phase === 'revealed') && current && (
           <section className="flex flex-col gap-4 w-full">
-            {/* Progress dots */}
-            <div className="flex gap-1.5 justify-center">
+            {/* Progress dots — decorative only, not interactive */}
+            <div className="flex gap-1.5 justify-center" aria-hidden="true">
               {Array.from({ length: total }, (_, i) => (
                 <span
                   key={i}
@@ -138,6 +143,9 @@ export default function DailyGame({ categories, onHome }) {
                   <button className="lifeline-btn" onClick={handleLifeline}>
                     💡 Tanong sa Madla
                   </button>
+                )}
+                {lifelineUsed && !lifelineDisplay && (
+                  <p className="lifeline-used">💡 Nagamit na</p>
                 )}
                 {lifelineDisplay === 'loading' && (
                   <p className="crowd-line">Hinahanap ang madla…</p>
@@ -216,7 +224,7 @@ export default function DailyGame({ categories, onHome }) {
           <div className="cta-bar-inner">
             {phase === 'playing'
               ? <GuessButtons onGuess={handleGuess} />
-              : <button className="action-btn" style={{ width: '100%' }} onClick={next}>
+              : <button className="action-btn" style={{ width: '100%' }} onClick={handleNext}>
                   {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}
                 </button>
             }

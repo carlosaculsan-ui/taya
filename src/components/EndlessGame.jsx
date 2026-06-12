@@ -58,6 +58,11 @@ export default function EndlessGame({ categories, onHome }) {
     setCrowdStats(stats);
   }, [pair, guess]);
 
+  const handleNext = useCallback(() => {
+    next();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [next]);
+
   const isPlaying = phase === 'playing' || phase === 'revealed';
 
   return (
@@ -185,7 +190,7 @@ export default function EndlessGame({ categories, onHome }) {
           <div className="cta-bar-inner">
             {phase === 'playing'
               ? <GuessButtons onGuess={handleGuess} />
-              : <button className="action-btn" style={{ width: '100%' }} onClick={next}>
+              : <button className="action-btn" style={{ width: '100%' }} onClick={correct ? handleNext : next}>
                   {correct ? 'Susunod →' : 'Tingnan ang resulta'}
                 </button>
             }

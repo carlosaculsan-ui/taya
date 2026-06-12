@@ -1,0 +1,104 @@
+{
+  "meta": {
+    "asOf": "2026-06-11",
+    "note": "Items with verified:false are reasonable estimates or disputed figures — replace or confirm before shipping. Prices marked volatile change weekly; plan a refresh cadence.",
+    "sources": {
+      "presyo": "PSA Price Situationer (May 2026), LTFRB/news reports (Mar-Apr 2026)",
+      "lungsod": "PSA 2020 Census of Population",
+      "isla": "Standard land area figures (NAMRIA/commonly cited)",
+      "takilya": "Studio and news-reported worldwide grosses"
+    }
+  },
+  "categories": [
+    {
+      "id": "presyo",
+      "label": "Presyo",
+      "description": "Philippine Market Prices",
+      "metric": "average price (PHP)",
+      "formatter": "peso",
+      "items": [
+        { "id": "presyo_itlog",            "name": "Itlog (1 pc, national avg)",       "value": 9.17,  "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_bigas_regular",    "name": "Bigas regular milled (1 kg)",      "value": 50.91, "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_bigas_wellmilled", "name": "Bigas well milled (1 kg)",         "value": 58.33, "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_galunggong",       "name": "Galunggong (1 kg)",                "value": 234,   "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_carrots",          "name": "Carrots (1 kg)",                   "value": 168,   "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_liempo",           "name": "Liempo (1 kg)",                    "value": 369,   "verified": true,  "asOf": "Apr 2026" },
+        { "id": "presyo_jeepney_trad",     "name": "Jeepney base fare (traditional)",  "value": 13,    "verified": true,  "asOf": "Jun 2026", "note": "Mar 2026 hike to P14 suspended by Malacanang" },
+        { "id": "presyo_jeepney_modern",   "name": "Modern jeepney base fare",         "value": 15,    "verified": true,  "asOf": "Jun 2026" },
+        { "id": "presyo_mcdo_eggdesal",    "name": "McDo Cheesy Eggdesal (solo)",      "value": 82,    "verified": true,  "asOf": "Jun 2026" },
+        { "id": "presyo_gasolina",         "name": "Gasolina (1 L, est.)",             "value": 85,    "verified": false, "volatile": true, "note": "P75-95 range reported Mar 2026, swinging weekly due to oil crisis" },
+        { "id": "presyo_diesel",           "name": "Diesel (1 L, est.)",               "value": 100,   "verified": false, "volatile": true },
+        { "id": "presyo_coke_sakto",       "name": "Coke Sakto",                       "value": 17,    "verified": false },
+        { "id": "presyo_pancit_canton",    "name": "Pancit canton (1 pack)",           "value": 19,    "verified": false },
+        { "id": "presyo_pandesal",         "name": "Pandesal (1 pc, bakery)",          "value": 5,     "verified": false },
+        { "id": "presyo_kape_sachet",      "name": "3-in-1 kape sachet",              "value": 12,    "verified": false }
+      ]
+    },
+    {
+      "id": "lungsod",
+      "label": "Lungsod",
+      "description": "Philippine City Populations",
+      "metric": "population (2020 census)",
+      "formatter": "number",
+      "items": [
+        { "id": "lungsod_quezon_city", "name": "Quezon City",   "value": 2960048, "verified": true },
+        { "id": "lungsod_manila",      "name": "Manila",         "value": 1846513, "verified": true },
+        { "id": "lungsod_davao",       "name": "Davao City",     "value": 1776949, "verified": true },
+        { "id": "lungsod_caloocan",    "name": "Caloocan",       "value": 1661584, "verified": true },
+        { "id": "lungsod_zamboanga",   "name": "Zamboanga City", "value": 977234,  "verified": true },
+        { "id": "lungsod_cebu",        "name": "Cebu City",      "value": 964169,  "verified": true },
+        { "id": "lungsod_antipolo",    "name": "Antipolo",       "value": 887399,  "verified": true },
+        { "id": "lungsod_taguig",      "name": "Taguig",         "value": 886722,  "verified": true, "note": "Pre-EMBO transfer figure" },
+        { "id": "lungsod_pasig",       "name": "Pasig",          "value": 803159,  "verified": true },
+        { "id": "lungsod_cdo",         "name": "Cagayan de Oro", "value": 728402,  "verified": true },
+        { "id": "lungsod_valenzuela",  "name": "Valenzuela",     "value": 714978,  "verified": true },
+        { "id": "lungsod_dasmarinas",  "name": "Dasmariñas",     "value": 703141,  "verified": true },
+        { "id": "lungsod_gensan",      "name": "General Santos", "value": 697315,  "verified": true },
+        { "id": "lungsod_bacoor",      "name": "Bacoor",         "value": 664625,  "verified": true },
+        { "id": "lungsod_makati",      "name": "Makati",         "value": 629616,  "verified": true },
+        { "id": "lungsod_bacolod",     "name": "Bacolod",        "value": 600783,  "verified": true },
+        { "id": "lungsod_iloilo",      "name": "Iloilo City",    "value": 457626,  "verified": true }
+      ]
+    },
+    {
+      "id": "isla",
+      "label": "Isla",
+      "description": "Philippine Island Land Areas",
+      "metric": "land area (km²)",
+      "formatter": "area",
+      "items": [
+        { "id": "isla_luzon",       "name": "Luzon",       "value": 109965, "verified": true },
+        { "id": "isla_mindanao",    "name": "Mindanao",    "value": 97530,  "verified": true },
+        { "id": "isla_samar",       "name": "Samar",       "value": 13429,  "verified": true },
+        { "id": "isla_negros",      "name": "Negros",      "value": 13310,  "verified": true },
+        { "id": "isla_palawan",     "name": "Palawan",     "value": 12189,  "verified": true },
+        { "id": "isla_panay",       "name": "Panay",       "value": 12011,  "verified": true },
+        { "id": "isla_mindoro",     "name": "Mindoro",     "value": 10572,  "verified": true },
+        { "id": "isla_leyte",       "name": "Leyte",       "value": 7368,   "verified": true },
+        { "id": "isla_cebu",        "name": "Cebu",        "value": 4944,   "verified": true },
+        { "id": "isla_bohol",       "name": "Bohol",       "value": 4821,   "verified": true },
+        { "id": "isla_masbate",     "name": "Masbate",     "value": 4048,   "verified": true },
+        { "id": "isla_catanduanes", "name": "Catanduanes", "value": 1523,   "verified": true },
+        { "id": "isla_marinduque",  "name": "Marinduque",  "value": 952,    "verified": true },
+        { "id": "isla_siquijor",    "name": "Siquijor",    "value": 343,    "verified": true },
+        { "id": "isla_camiguin",    "name": "Camiguin",    "value": 238,    "verified": true },
+        { "id": "isla_boracay",     "name": "Boracay",     "value": 10,     "verified": true }
+      ]
+    },
+    {
+      "id": "takilya",
+      "label": "Takilya",
+      "description": "Filipino Film Box Office",
+      "metric": "worldwide gross (PHP millions, reported)",
+      "formatter": "pesoMillions",
+      "items": [
+        { "id": "takilya_hla2",        "name": "Hello, Love, Again (2024)",                "value": 1060, "verified": true,  "note": "As of Nov 23, 2024, 10 days in — final gross went higher; update if you find the final figure" },
+        { "id": "takilya_rewind",      "name": "Rewind (2023)",                            "value": 924,  "verified": true },
+        { "id": "takilya_hlg",         "name": "Hello, Love, Goodbye (2019)",              "value": 880,  "verified": false, "note": "Widely reported but confirm vs official figure" },
+        { "id": "takilya_hous",        "name": "The Hows of Us (2018)",                    "value": 810,  "verified": false, "note": "Disputed — some sources claim P1B worldwide by Feb 2019. Verify before pairing with Hello, Love, Goodbye" },
+        { "id": "takilya_unkabogable", "name": "The Unkabogable Praybeyt Benjamin (2011)", "value": 332,  "verified": true },
+        { "id": "takilya_starting",    "name": "Starting Over Again (2014)",               "value": 189,  "verified": false, "note": "Figure ambiguity in sources — confirm cumulative gross" }
+      ]
+    }
+  ]
+}

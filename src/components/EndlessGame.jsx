@@ -105,8 +105,6 @@ export default function EndlessGame({ categories, onHome }) {
         {/* ── Playing / Revealed ── */}
         {isPlaying && pair && (
           <section className="flex flex-col gap-4 w-full">
-            <CategoryFilter categories={categories} enabled={enabledCats} onToggle={toggleCat} />
-
             <div className="flex flex-col md:flex-row gap-4 items-stretch">
               <Card item={pair.left} />
               <div className="flex items-center justify-center self-center shrink-0 py-2">
@@ -147,6 +145,9 @@ export default function EndlessGame({ categories, onHome }) {
                 </div>
               </div>
             )}
+
+            {/* Filter chips below cards — thumb-reachable zone on mobile */}
+            <CategoryFilter categories={categories} enabled={enabledCats} onToggle={toggleCat} />
           </section>
         )}
 

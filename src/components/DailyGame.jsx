@@ -94,7 +94,7 @@ export default function DailyGame({ categories, onHome }) {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center gap-5 p-4 max-w-2xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-2xl mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
 
         {/* ── Playing / Revealed ── */}
         {(phase === 'playing' || phase === 'revealed') && current && (
@@ -156,15 +156,13 @@ export default function DailyGame({ categories, onHome }) {
               </div>
             )}
 
-            <GuessButtons onGuess={handleGuess} disabled={phase === 'revealed'} />
-
             {phase === 'revealed' && (
               <div className="flex flex-col items-center gap-2">
                 <p className={`feedback-text ${lastAnswer ? 'correct' : 'wrong'}`}>
                   {lastAnswer ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
-                {/* Crowd stats — min-height prevents Susunod button from jumping */}
+                {/* Crowd stats */}
                 <div style={{ minHeight: '1.5rem' }}>
                   {crowdStats !== null && (
                     crowdStats.total < 5
@@ -180,10 +178,6 @@ export default function DailyGame({ categories, onHome }) {
                       )
                   )}
                 </div>
-
-                <button className="action-btn" onClick={next}>
-                  {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}
-                </button>
               </div>
             )}
           </section>
@@ -215,6 +209,20 @@ export default function DailyGame({ categories, onHome }) {
         )}
 
       </main>
+
+      {/* Fixed CTA bar — always on-screen regardless of viewport height */}
+      {(phase === 'playing' || phase === 'revealed') && current && (
+        <div className="cta-bar">
+          <div className="cta-bar-inner">
+            {phase === 'playing'
+              ? <GuessButtons onGuess={handleGuess} />
+              : <button className="action-btn" style={{ width: '100%' }} onClick={next}>
+                  {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}
+                </button>
+            }
+          </div>
+        </div>
+      )}
     </div>
   );
 }

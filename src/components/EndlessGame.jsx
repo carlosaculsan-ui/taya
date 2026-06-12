@@ -83,7 +83,7 @@ export default function EndlessGame({ categories, onHome }) {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center gap-5 p-4 max-w-2xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-2xl mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
 
         {/* ── Idle ── */}
         {phase === 'idle' && (
@@ -123,15 +123,13 @@ export default function EndlessGame({ categories, onHome }) {
 
             <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
 
-            <GuessButtons onGuess={handleGuess} disabled={phase === 'revealed'} />
-
             {phase === 'revealed' && (
               <div className="flex flex-col items-center gap-2">
                 <p className={`feedback-text ${correct ? 'correct' : 'wrong'}`}>
                   {correct ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
-                {/* Crowd stats — min-height prevents button from jumping */}
+                {/* Crowd stats */}
                 <div style={{ minHeight: '1.5rem' }}>
                   {crowdStats !== null && (
                     crowdStats.total < 5
@@ -147,10 +145,6 @@ export default function EndlessGame({ categories, onHome }) {
                       )
                   )}
                 </div>
-
-                <button className="action-btn" onClick={next}>
-                  {correct ? 'Susunod →' : 'Tingnan ang resulta'}
-                </button>
               </div>
             )}
           </section>
@@ -183,6 +177,20 @@ export default function EndlessGame({ categories, onHome }) {
         )}
 
       </main>
+
+      {/* Fixed CTA bar — always on-screen regardless of viewport height */}
+      {isPlaying && pair && (
+        <div className="cta-bar">
+          <div className="cta-bar-inner">
+            {phase === 'playing'
+              ? <GuessButtons onGuess={handleGuess} />
+              : <button className="action-btn" style={{ width: '100%' }} onClick={next}>
+                  {correct ? 'Susunod →' : 'Tingnan ang resulta'}
+                </button>
+            }
+          </div>
+        </div>
+      )}
     </div>
   );
 }

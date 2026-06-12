@@ -301,7 +301,8 @@ body {
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 0.28rem 0.7rem;
+  padding: 0.55rem 0.85rem;
+  min-height: 2.75rem;
   border-radius: 3px;
   border: 2px solid;
   cursor: pointer;
@@ -451,13 +452,31 @@ body {
   background: transparent;
   border: 1.5px dashed rgba(255, 209, 0, 0.3);
   border-radius: 4px;
-  padding: 0.4rem 1rem;
+  padding: 0.65rem 1.25rem;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s;
 }
 .lifeline-btn:hover {
   color: var(--yellow);
   border-color: rgba(255, 209, 0, 0.7);
+}
+
+/* ── Fixed CTA bar (TAAS/BABA + Susunod always on-screen) ──── */
+.cta-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-top: 2px solid rgba(255, 243, 176, 0.12);
+}
+.cta-bar-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* ── Confetti ───────────────────────────────────────────────── */

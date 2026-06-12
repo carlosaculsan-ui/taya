@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useEndlessGame } from '../hooks/useEndlessGame';
 import Card from './Card';
 import GuessButtons from './GuessButtons';
@@ -19,13 +19,54 @@ export default function EndlessGame({ categories, onHome }) {
   const [currentPick, setCurrentPick] = useState(null);
   const [crowdStats, setCrowdStats] = useState(null);
 
-  // Reset when a new question starts
+  // ── Reveal timing ──────────────────────────────────────────────
+  const [revealComplete, setRevealComplete] = useState(false);
+  const [susunodReady, setSusunodReady] = useState(false);
+
+  // ── Ticket stub animation ──────────────────────────────────────
+  const prevStreakRef = useRef(streak);
+  const [ticketAnim, setTicketAnim] = useState(null); // 'stamp' | 'shake' | null
+
+  // Reset reveal state each time a new question starts
   useEffect(() => {
     if (phase === 'playing') {
       setCurrentPick(null);
       setCrowdStats(null);
+      setRevealComplete(false);
+      setSusunodReady(false);
     }
   }, [phase]);
+
+  // Wait for card scramble (450ms) before showing feedback
+  useEffect(() => {
+    if (phase !== 'revealed') return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const t = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  // After feedback appears, delay SUSUNOD by 400ms
+  useEffect(() => {
+    if (!revealComplete) return;
+    const t = setTimeout(() => setSusunodReady(true), 400);
+    return () => clearTimeout(t);
+  }, [revealComplete]);
+
+  // Ticket stamp on increment, shake on reset
+  useEffect(() => {
+    const prev = prevStreakRef.current;
+    prevStreakRef.current = streak;
+    if (streak > prev) {
+      setTicketAnim('stamp');
+      const t = setTimeout(() => setTicketAnim(null), 200);
+      return () => clearTimeout(t);
+    }
+    if (streak === 0 && prev > 0) {
+      setTicketAnim('shake');
+      const t = setTimeout(() => setTicketAnim(null), 300);
+      return () => clearTimeout(t);
+    }
+  }, [streak]);
 
   useEffect(() => {
     if (phase !== 'revealed') return;
@@ -47,7 +88,6 @@ export default function EndlessGame({ categories, onHome }) {
     return () => timers.forEach(clearTimeout);
   }, [phase, correct, streak]);
 
-  // Intercept guess to capture pick + fire stats transaction
   const handleGuess = useCallback(async (direction) => {
     if (!pair) return;
     setCurrentPick(direction);
@@ -79,9 +119,9 @@ export default function EndlessGame({ categories, onHome }) {
           >
             ENDLESS
           </span>
-          <div className="ticket-stub">
+          <div className={`ticket-stub${ticketAnim ? ` ${ticketAnim}` : ''}`}>
             <span className="ticket-label">{isPlaying ? 'streak' : 'best'}</span>
-            <span className={`ticket-num${isPlaying ? '' : ' dim'}`}>
+            <span className={`ticket-num${isPlaying ? '' : ' dim'}${ticketAnim === 'shake' ? ' flash-loss' : ''}`}>
               {isPlaying ? streak : best}
             </span>
           </div>
@@ -110,6 +150,9 @@ export default function EndlessGame({ categories, onHome }) {
         {/* ── Playing / Revealed ── */}
         {isPlaying && pair && (
           <section className="flex flex-col gap-4 w-full">
+            {/* Barker prompt — first thing the eye reads each round */}
+            <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
+
             <div className="flex flex-col md:flex-row gap-4 items-stretch">
               <Card item={pair.left} />
               <div className="flex items-center justify-center self-center shrink-0 py-2">
@@ -124,11 +167,13 @@ export default function EndlessGame({ categories, onHome }) {
               />
             </div>
 
-            <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
-
+            {/* Feedback — reserved space, visible only after scramble lands */}
             {phase === 'revealed' && (
-              <div className="flex flex-col items-center gap-2">
-                <p className={`feedback-text ${correct ? 'correct' : 'wrong'}`}>
+              <div
+                className="flex flex-col items-center gap-2"
+                style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
+              >
+                <p className={`feedback-text ${correct ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
                   {correct ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
@@ -190,7 +235,11 @@ export default function EndlessGame({ categories, onHome }) {
           <div className="cta-bar-inner">
             {phase === 'playing'
               ? <GuessButtons onGuess={handleGuess} />
-              : <button className="action-btn" style={{ width: '100%' }} onClick={correct ? handleNext : next}>
+              : <button
+                  className={`action-btn${susunodReady ? ' susunod-enter' : ' susunod-hidden'}`}
+                  style={{ width: '100%' }}
+                  onClick={correct ? handleNext : next}
+                >
                   {correct ? 'Susunod →' : 'Tingnan ang resulta'}
                 </button>
             }

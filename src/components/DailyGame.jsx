@@ -15,20 +15,40 @@ export default function DailyGame({ categories, onHome }) {
 
   // ── Crowd stats (post-reveal) ──────────────────────────────────
   const [currentPick, setCurrentPick] = useState(null);
-  const [crowdStats, setCrowdStats] = useState(null); // null = nothing to show yet
+  const [crowdStats, setCrowdStats] = useState(null);
 
   // ── Lifeline ───────────────────────────────────────────────────
   const lifelineKey = `taya_lifeline_${dayNumber}`;
   const [lifelineUsed, setLifelineUsed] = useState(() => !!localStorage.getItem(lifelineKey));
-  // null | 'loading' | { noData: true } | { stats: {...} }
   const [lifelineDisplay, setLifelineDisplay] = useState(null);
+
+  // ── Reveal timing ──────────────────────────────────────────────
+  const [revealComplete, setRevealComplete] = useState(false);
+  const [susunodReady, setSusunodReady] = useState(false);
 
   // Reset per-question state when moving to a new question
   useEffect(() => {
     setCurrentPick(null);
     setCrowdStats(null);
     setLifelineDisplay(null);
+    setRevealComplete(false);
+    setSusunodReady(false);
   }, [idx]);
+
+  // After guess, wait for scramble (450ms) before showing feedback
+  useEffect(() => {
+    if (phase !== 'revealed') return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const t = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  // After feedback appears, delay SUSUNOD by 400ms
+  useEffect(() => {
+    if (!revealComplete) return;
+    const t = setTimeout(() => setSusunodReady(true), 400);
+    return () => clearTimeout(t);
+  }, [revealComplete]);
 
   const lastAnswer = answers[answers.length - 1];
 
@@ -39,7 +59,6 @@ export default function DailyGame({ categories, onHome }) {
     return () => clearTimeout(t);
   }, [phase, lastAnswer]);
 
-  // Intercept guess to capture pick + fire stats transaction
   const handleGuess = useCallback(async (direction) => {
     if (phase !== 'playing' || !current) return;
     setCurrentPick(direction);
@@ -47,10 +66,9 @@ export default function DailyGame({ categories, onHome }) {
     const isCorrect = checkGuess(direction, current.left, current.right);
     const qId = getDailyQuestionId(dayNumber, idx);
     const stats = await recordGuess(qId, direction, isCorrect);
-    setCrowdStats(stats); // null on network failure → nothing shown
+    setCrowdStats(stats);
   }, [phase, current, guess, dayNumber, idx]);
 
-  // Lifeline: fetch stats before the player answers
   const handleLifeline = useCallback(async () => {
     if (lifelineUsed || lifelineDisplay) return;
     setLifelineDisplay('loading');
@@ -120,6 +138,9 @@ export default function DailyGame({ categories, onHome }) {
               ))}
             </div>
 
+            {/* Barker prompt — first thing the eye reads each round */}
+            <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
+
             <div className="flex flex-col md:flex-row gap-4 items-stretch">
               <Card item={current.left} />
               <div className="flex items-center justify-center self-center shrink-0 py-2">
@@ -133,8 +154,6 @@ export default function DailyGame({ categories, onHome }) {
                 }
               />
             </div>
-
-            <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
 
             {/* Lifeline — playing phase only */}
             {phase === 'playing' && (
@@ -164,9 +183,13 @@ export default function DailyGame({ categories, onHome }) {
               </div>
             )}
 
+            {/* Feedback — reserved space, visible only after scramble lands */}
             {phase === 'revealed' && (
-              <div className="flex flex-col items-center gap-2">
-                <p className={`feedback-text ${lastAnswer ? 'correct' : 'wrong'}`}>
+              <div
+                className="flex flex-col items-center gap-2"
+                style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
+              >
+                <p className={`feedback-text ${lastAnswer ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
                   {lastAnswer ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
@@ -224,7 +247,11 @@ export default function DailyGame({ categories, onHome }) {
           <div className="cta-bar-inner">
             {phase === 'playing'
               ? <GuessButtons onGuess={handleGuess} />
-              : <button className="action-btn" style={{ width: '100%' }} onClick={handleNext}>
+              : <button
+                  className={`action-btn${susunodReady ? ' susunod-enter' : ' susunod-hidden'}`}
+                  style={{ width: '100%' }}
+                  onClick={handleNext}
+                >
                   {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}
                 </button>
             }

@@ -131,20 +131,22 @@ export default function EndlessGame({ categories, onHome }) {
                   {correct ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
-                {/* Crowd stats */}
-                {crowdStats !== null && (
-                  crowdStats.total < 5
-                    ? <p className="crowd-line">Ikaw ang unang tumaya!</p>
-                    : (
-                      <p className="crowd-line">
-                        {Math.round(
-                          (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
-                          / crowdStats.total * 100
-                        )}% ng bayan pumili ng {currentPick === 'taas' ? 'TAAS' : 'BABA'}
-                        &nbsp;·&nbsp;{crowdStats.total} tumaya
-                      </p>
-                    )
-                )}
+                {/* Crowd stats — min-height prevents button from jumping */}
+                <div style={{ minHeight: '1.5rem' }}>
+                  {crowdStats !== null && (
+                    crowdStats.total < 5
+                      ? <p className="crowd-line">Ikaw ang unang tumaya!</p>
+                      : (
+                        <p className="crowd-line">
+                          {Math.round(
+                            (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
+                            / crowdStats.total * 100
+                          )}% ng bayan pumili ng {currentPick === 'taas' ? 'TAAS' : 'BABA'}
+                          &nbsp;·&nbsp;{crowdStats.total} tumaya
+                        </p>
+                      )
+                  )}
+                </div>
 
                 <button className="action-btn" onClick={next}>
                   {correct ? 'Susunod →' : 'Tingnan ang resulta'}

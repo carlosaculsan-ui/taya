@@ -344,8 +344,20 @@ body {
   font-size: 1.45rem;
   letter-spacing: 0.04em;
 }
+@keyframes wrong-flash {
+  0%   { transform: scale(1);    }
+  20%  { transform: scale(1.08); }
+  48%  { transform: scale(0.95); }
+  72%  { transform: scale(1.04); }
+  100% { transform: scale(1);    }
+}
+
 .feedback-text.correct { color: var(--yellow); text-shadow: 2px 2px 0 rgba(0,0,0,0.5); }
-.feedback-text.wrong   { color: var(--cream);  text-shadow: 2px 2px 0 var(--red); }
+.feedback-text.wrong   {
+  color: var(--cream);
+  text-shadow: 2px 2px 0 var(--red), 0 0 18px rgba(200,16,46,0.55);
+  animation: wrong-flash 0.42s ease-out;
+}
 
 /* ── Progress dots ─────────────────────────────────────────── */
 .progress-dot {

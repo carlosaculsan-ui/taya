@@ -138,7 +138,7 @@ export default function DailyGame({ categories, onHome }) {
 
             {/* Lifeline — playing phase only */}
             {phase === 'playing' && (
-              <div className="flex justify-center">
+              <div className="flex justify-center" style={{ minHeight: '2rem' }}>
                 {!lifelineDisplay && !lifelineUsed && (
                   <button className="lifeline-btn" onClick={handleLifeline}>
                     💡 Tanong sa Madla
@@ -169,20 +169,22 @@ export default function DailyGame({ categories, onHome }) {
                   {lastAnswer ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
                 </p>
 
-                {/* Crowd stats */}
-                {crowdStats !== null && (
-                  crowdStats.total < 5
-                    ? <p className="crowd-line">Ikaw ang unang tumaya!</p>
-                    : (
-                      <p className="crowd-line">
-                        {Math.round(
-                          (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
-                          / crowdStats.total * 100
-                        )}% ng bayan pumili ng {currentPick === 'taas' ? 'TAAS' : 'BABA'}
-                        &nbsp;·&nbsp;{crowdStats.total} tumaya
-                      </p>
-                    )
-                )}
+                {/* Crowd stats — min-height prevents Susunod button from jumping */}
+                <div style={{ minHeight: '1.5rem' }}>
+                  {crowdStats !== null && (
+                    crowdStats.total < 5
+                      ? <p className="crowd-line">Ikaw ang unang tumaya!</p>
+                      : (
+                        <p className="crowd-line">
+                          {Math.round(
+                            (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
+                            / crowdStats.total * 100
+                          )}% ng bayan pumili ng {currentPick === 'taas' ? 'TAAS' : 'BABA'}
+                          &nbsp;·&nbsp;{crowdStats.total} tumaya
+                        </p>
+                      )
+                  )}
+                </div>
 
                 <button className="action-btn" onClick={next}>
                   {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}

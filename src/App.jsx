@@ -44,7 +44,7 @@ export default function App() {
             className="label-caps mt-2"
             style={{ color: 'var(--yellow)', opacity: 0.92, letterSpacing: '0.28em' }}
           >
-            Hulaan &nbsp;·&nbsp; Iskor &nbsp;·&nbsp; Magjaya
+            Hulaan &nbsp;&nbsp;·&nbsp;&nbsp; Iskor &nbsp;&nbsp;·&nbsp;&nbsp; Magjaya
           </p>
         </div>
         <BulbRow count={30} />

@@ -115,6 +115,19 @@ body {
   border-radius: 6px;
   color: var(--card-text);
   box-shadow: 4px 4px 0 rgba(0,0,0,0.45);
+  position: relative;
+  overflow: hidden;
+}
+/* Faint SVG noise grain — "painted wood" effect at 4% opacity */
+.perya-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
 
 .card-label {
@@ -383,19 +396,44 @@ body {
 .feedback-text.wrong.animate { animation: wrong-flash 0.42s ease-out; }
 
 /* ── Progress dots ─────────────────────────────────────────── */
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255, 209, 0, 0.45); }
+  50%      { box-shadow: 0 0 0 5px rgba(255, 209, 0, 0); }
+}
 .progress-dot {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,243,176,0.2);
+  border: 2px solid rgba(255,243,176,0.2);
   background: transparent;
   transition: all 0.15s ease;
   pointer-events: none;
+  flex-shrink: 0;
 }
 .progress-dot.answered { background: var(--yellow); border-color: var(--yellow); }
-.progress-dot.current  { border-color: rgba(255,243,176,0.72); }
+.progress-dot.current {
+  width: 14px;
+  height: 14px;
+  border-color: rgba(255,243,176,0.72);
+  animation: dot-pulse 1.5s ease-in-out infinite;
+}
 
 /* ── Game over ──────────────────────────────────────────────── */
+.gameover-ay {
+  font-family: 'Bungee', cursive;
+  font-size: 4.5rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  color: var(--red);
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
+}
+.gameover-hero-num {
+  font-family: 'Bungee', cursive;
+  font-size: 7rem;
+  line-height: 1;
+  color: var(--yellow);
+  text-shadow: 4px 6px 0 rgba(0,0,0,0.5);
+}
 .gameover-title {
   font-family: 'Bungee', cursive;
   font-size: 2.8rem;
@@ -464,25 +502,32 @@ body {
   font-size: 0.64rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 209, 0, 0.65);
+  color: var(--yellow);
   background: transparent;
-  border: 1.5px dashed rgba(255, 209, 0, 0.3);
+  border: 1.5px solid rgba(255, 209, 0, 0.72);
   border-radius: 4px;
   padding: 0.65rem 1.25rem;
   min-height: 2.75rem;
   cursor: pointer;
-  transition: color 0.12s, border-color 0.12s;
+  box-shadow: 0 0 10px rgba(255, 209, 0, 0.22);
+  transition: color 0.12s, border-color 0.12s, box-shadow 0.12s;
 }
 .lifeline-btn:hover {
-  color: var(--yellow);
-  border-color: rgba(255, 209, 0, 0.7);
+  border-color: var(--yellow);
+  box-shadow: 0 0 16px rgba(255, 209, 0, 0.45);
 }
+/* Consumed state — dashed ghost, stamped dead */
 .lifeline-used {
-  font-family: 'Paytone One', sans-serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
+  font-family: 'Bungee', cursive;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 209, 0, 0.28);
+  color: rgba(255, 209, 0, 0.3);
+  border: 1.5px dashed rgba(255, 209, 0, 0.18);
+  border-radius: 3px;
+  padding: 0.38rem 0.9rem;
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 209, 0, 0.3);
 }
 
 /* ── Fixed CTA bar (TAAS/BABA + Susunod always on-screen) ──── */
@@ -496,7 +541,7 @@ body {
   border-top: 2px solid rgba(255, 243, 176, 0.12);
 }
 .cta-bar-inner {
-  max-width: 42rem;
+  max-width: 45rem;
   margin: 0 auto;
   padding: 0.75rem 1rem;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
@@ -549,7 +594,8 @@ body {
   .ticket-stub.stamp,
   .ticket-stub.shake,
   .ticket-num.flash-loss,
-  .feedback-text.wrong.animate { animation: none; }
+  .feedback-text.wrong.animate,
+  .progress-dot.current { animation: none; }
 }
 
 /* ── Landscape / short-viewport compact mode ────────────────── */

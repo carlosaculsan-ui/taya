@@ -46,7 +46,7 @@ export function useDailyGame(categories) {
 
   const shareText = useMemo(() => {
     const grid = answers.map((a) => (a ? '🟩' : '🟥')).join('');
-    return `TAYA! Araw #${dayNumber}\n${score}/${pairs.length}\n\n${grid}\n\nTaya ka na!`;
+    return `TAYA! — Taya ng Araw #${dayNumber}\n${score}/${pairs.length}\n\n${grid}\n\nTaya ka na!`;
   }, [answers, score, pairs.length, dayNumber]);
 
   return {

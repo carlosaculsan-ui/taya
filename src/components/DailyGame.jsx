@@ -3,6 +3,7 @@ import { useDailyGame } from '../hooks/useDailyGame';
 import Card from './Card';
 import GuessButtons from './GuessButtons';
 import BulbRow from './BulbRow';
+import Banderitas from './Banderitas';
 import { checkGuess } from '../utils/gameLogic';
 import { getDailyQuestionId, recordGuess, fetchStats } from '../utils/stats';
 
@@ -117,7 +118,9 @@ export default function DailyGame({ categories, onHome }) {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-2xl mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
+      <Banderitas />
+
+      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-[45rem] mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
 
         {/* ── Playing / Revealed ── */}
         {(phase === 'playing' || phase === 'revealed') && current && (
@@ -164,7 +167,7 @@ export default function DailyGame({ categories, onHome }) {
                   </button>
                 )}
                 {lifelineUsed && !lifelineDisplay && (
-                  <p className="lifeline-used">💡 Nagamit na</p>
+                  <p className="lifeline-used">GAMIT NA</p>
                 )}
                 {lifelineDisplay === 'loading' && (
                   <p className="crowd-line">Hinahanap ang madla…</p>

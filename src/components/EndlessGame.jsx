@@ -4,6 +4,7 @@ import Card from './Card';
 import GuessButtons from './GuessButtons';
 import CategoryFilter from './CategoryFilter';
 import BulbRow from './BulbRow';
+import Banderitas from './Banderitas';
 import Confetti from './Confetti';
 import { checkGuess } from '../utils/gameLogic';
 import { getEndlessQuestionId, recordGuess } from '../utils/stats';
@@ -72,11 +73,12 @@ export default function EndlessGame({ categories, onHome }) {
     if (phase !== 'revealed') return;
 
     const timers = [];
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (correct) {
       setBulbState('chasing');
       timers.push(setTimeout(() => setBulbState('idle'), 750));
-      if ([5, 10, 20].includes(streak)) {
+      if ([5, 10, 20].includes(streak) && !noMotion) {
         setShowConfetti(true);
         timers.push(setTimeout(() => setShowConfetti(false), 2400));
       }
@@ -87,6 +89,15 @@ export default function EndlessGame({ categories, onHome }) {
 
     return () => timers.forEach(clearTimeout);
   }, [phase, correct, streak]);
+
+  // Celebration confetti burst when landing on the gameover screen with a high streak
+  useEffect(() => {
+    if (phase !== 'gameover' || streak < 5) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    setShowConfetti(true);
+    const t = setTimeout(() => setShowConfetti(false), 2400);
+    return () => clearTimeout(t);
+  }, [phase, streak]);
 
   const handleGuess = useCallback(async (direction) => {
     if (!pair) return;
@@ -128,7 +139,9 @@ export default function EndlessGame({ categories, onHome }) {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-2xl mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
+      <Banderitas />
+
+      <main className="flex-1 flex flex-col items-center gap-5 p-4 max-w-[45rem] mx-auto w-full" style={{ paddingBottom: '5.5rem' }}>
 
         {/* ── Idle ── */}
         {phase === 'idle' && (
@@ -204,9 +217,21 @@ export default function EndlessGame({ categories, onHome }) {
         {/* ── Game over ── */}
         {phase === 'gameover' && (
           <section className="flex flex-col items-center gap-5 text-center">
-            <p className="label-caps" style={{ opacity: 0.42, letterSpacing: '0.38em' }}>
-              tapos ka na!
-            </p>
+            {streak < 5 ? (
+              <>
+                <p className="gameover-ay">AY!</p>
+                <p className="label-caps" style={{ opacity: 0.42, letterSpacing: '0.38em' }}>
+                  TAPOS KA NA!
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="label-caps" style={{ color: 'var(--yellow)', opacity: 0.88, letterSpacing: '0.28em' }}>
+                  LUPIT MO!
+                </p>
+                <p className="gameover-hero-num">{streak}</p>
+              </>
+            )}
             <h2 className="gameover-title">
               Walang<br />Iyakan!
             </h2>

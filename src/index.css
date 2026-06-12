@@ -15,6 +15,13 @@
   --card-text:   #3A1A00;
 }
 
+/* ── Focus ring ────────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
 /* ── Base ──────────────────────────────────────────────────── */
 body {
   background-color: var(--bg);

@@ -90,12 +90,7 @@ export default function DailyGame({ categories, onHome }) {
           >
             ARAW #{dayNumber}
           </span>
-          <span
-            className="f-bungee"
-            style={{ color: 'var(--cream)', fontSize: '0.82rem', minWidth: '3rem', textAlign: 'right' }}
-          >
-            {idx + 1}/{total}
-          </span>
+          <span style={{ minWidth: '3rem' }} />
         </div>
       </header>
 

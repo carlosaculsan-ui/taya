@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { formatValue } from '../utils/formatters';
+import { useLang } from '../i18n/strings';
 
 const DIGITS = '0123456789';
 
@@ -8,8 +9,11 @@ function scrambleFormat(str) {
 }
 
 export default function Card({ item, hidden = false, result }) {
+  const { t } = useLang();
   const { category } = item;
   const value = formatValue(item.value, category.formatter);
+  const catLabels = t('catLabels');
+  const displayLabel = catLabels[category.id] || category.label;
 
   const [displayValue, setDisplayValue] = useState(value);
   const [popping, setPopping] = useState(false);
@@ -57,7 +61,7 @@ export default function Card({ item, hidden = false, result }) {
       data-result={result}
       className="perya-card flex flex-col items-center justify-center gap-1.5 p-4 md:p-6 min-h-40 md:min-h-52 flex-1 text-center"
     >
-      <span className="card-label">{category.label}</span>
+      <span className="card-label">{displayLabel}</span>
       <h2 className="card-name">{item.name}</h2>
       <p className="card-metric">{category.metric}</p>
       <p className={hidden ? 'card-hidden' : `card-value${popping ? ' card-value-pop' : ''}`}>

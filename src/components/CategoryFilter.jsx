@@ -1,4 +1,9 @@
+import { useLang } from '../i18n/strings';
+
 export default function CategoryFilter({ categories, enabled, onToggle }) {
+  const { t } = useLang();
+  const catLabels = t('catLabels');
+
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       {categories.map((cat) => (
@@ -8,7 +13,7 @@ export default function CategoryFilter({ categories, enabled, onToggle }) {
           aria-pressed={enabled.has(cat.id)}
           className="booth-sign"
         >
-          {cat.label}
+          {catLabels[cat.id] || cat.label}
         </button>
       ))}
     </div>

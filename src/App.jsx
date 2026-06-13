@@ -5,11 +5,13 @@ import BulbRow from './components/BulbRow';
 import categoriesData from './data/taas-o-baba-dataset.json';
 import { getDayNumber, getTodayString } from './utils/gameLogic';
 import { seedDayIfEmpty } from './utils/stats';
+import { useLang } from './i18n/strings';
 
 const { categories } = categoriesData;
 
 export default function App() {
   const [mode, setMode] = useState(null);
+  const { lang, t, setLang } = useLang();
 
   useEffect(() => {
     seedDayIfEmpty(getDayNumber(getTodayString()));
@@ -44,7 +46,7 @@ export default function App() {
             className="label-caps mt-2"
             style={{ color: 'var(--yellow)', opacity: 0.92, letterSpacing: '0.28em' }}
           >
-            Hulaan &nbsp;&nbsp;·&nbsp;&nbsp; Iskor &nbsp;&nbsp;·&nbsp;&nbsp; Magjaya
+            {t('subtitle')}
           </p>
         </div>
         <BulbRow count={30} />
@@ -53,12 +55,30 @@ export default function App() {
       {/* Mode selection */}
       <nav className="flex flex-col gap-3 w-full max-w-xs">
         <button className="home-btn" onClick={() => setMode('daily')}>
-          📅 Taya ng Araw
+          {t('modeDaily')}
         </button>
         <button className="home-btn" onClick={() => setMode('endless')}>
-          ∞ Endless Mode
+          {t('modeEndless')}
         </button>
       </nav>
+
+      {/* Language toggle */}
+      <div className="flex gap-2 justify-center">
+        <button
+          className="booth-sign"
+          aria-pressed={lang === 'tl'}
+          onClick={() => setLang('tl')}
+        >
+          TAGALOG
+        </button>
+        <button
+          className="booth-sign"
+          aria-pressed={lang === 'en'}
+          onClick={() => setLang('en')}
+        >
+          ENGLISH
+        </button>
+      </div>
     </main>
   );
 }

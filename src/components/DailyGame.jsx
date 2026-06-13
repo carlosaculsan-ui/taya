@@ -4,10 +4,12 @@ import Card from './Card';
 import GuessButtons from './GuessButtons';
 import BulbRow from './BulbRow';
 import Banderitas from './Banderitas';
+import { useLang } from '../i18n/strings';
 import { checkGuess } from '../utils/gameLogic';
 import { getDailyQuestionId, recordGuess, fetchStats } from '../utils/stats';
 
 export default function DailyGame({ categories, onHome }) {
+  const { t } = useLang();
   const { phase, current, idx, answers, score, total, dayNumber, guess, next, shareText } =
     useDailyGame(categories);
 
@@ -40,15 +42,15 @@ export default function DailyGame({ categories, onHome }) {
   useEffect(() => {
     if (phase !== 'revealed') return;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const t = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
+    return () => clearTimeout(timer);
   }, [phase]);
 
   // After feedback appears, delay SUSUNOD by 400ms
   useEffect(() => {
     if (!revealComplete) return;
-    const t = setTimeout(() => setSusunodReady(true), 400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setSusunodReady(true), 400);
+    return () => clearTimeout(timer);
   }, [revealComplete]);
 
   const lastAnswer = answers[answers.length - 1];
@@ -56,8 +58,8 @@ export default function DailyGame({ categories, onHome }) {
   useEffect(() => {
     if (phase !== 'revealed') return;
     setBulbState(lastAnswer ? 'chasing' : 'dark');
-    const t = setTimeout(() => setBulbState('idle'), 750);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setBulbState('idle'), 750);
+    return () => clearTimeout(timer);
   }, [phase, lastAnswer]);
 
   const handleGuess = useCallback(async (direction) => {
@@ -107,12 +109,12 @@ export default function DailyGame({ categories, onHome }) {
       <header className="perya-header">
         <BulbRow state={bulbState} count={32} />
         <div className="flex items-center justify-between px-4 py-2">
-          <button className="nav-back" onClick={onHome}>← Umuwi</button>
+          <button className="nav-back" onClick={onHome}>{t('goHome')}</button>
           <span
             className="f-bungee"
             style={{ color: 'var(--yellow)', fontSize: '0.82rem', letterSpacing: '0.1em' }}
           >
-            ARAW #{dayNumber}
+            {t('dayLabel')} #{dayNumber}
           </span>
           <span style={{ minWidth: '3rem' }} />
         </div>
@@ -134,15 +136,13 @@ export default function DailyGame({ categories, onHome }) {
                     'progress-dot',
                     i < answers.length ? 'answered' : '',
                     i === answers.length ? 'current' : '',
-                  ]
-                    .join(' ')
-                    .trim()}
+                  ].join(' ').trim()}
                 />
               ))}
             </div>
 
-            {/* Barker prompt — first thing the eye reads each round */}
-            <p className="question-hint">Mas mataas o mas mababa ang kanan?</p>
+            {/* Barker prompt */}
+            <p className="question-hint">{t('questionHint')}</p>
 
             <div className="flex flex-col md:flex-row gap-4 items-stretch">
               <Card item={current.left} />
@@ -152,9 +152,7 @@ export default function DailyGame({ categories, onHome }) {
               <Card
                 item={current.right}
                 hidden={phase === 'playing'}
-                result={
-                  phase === 'revealed' ? (lastAnswer ? 'correct' : 'wrong') : undefined
-                }
+                result={phase === 'revealed' ? (lastAnswer ? 'correct' : 'wrong') : undefined}
               />
             </div>
 
@@ -163,24 +161,25 @@ export default function DailyGame({ categories, onHome }) {
               <div className="flex justify-center" style={{ minHeight: '2rem' }}>
                 {!lifelineDisplay && !lifelineUsed && (
                   <button className="lifeline-btn" onClick={handleLifeline}>
-                    💡 Tanong sa Madla
+                    {t('lifelineBtn')}
                   </button>
                 )}
                 {lifelineUsed && !lifelineDisplay && (
-                  <p className="lifeline-used">GAMIT NA</p>
+                  <p className="lifeline-used">{t('lifelineUsed')}</p>
                 )}
                 {lifelineDisplay === 'loading' && (
-                  <p className="crowd-line">Hinahanap ang madla…</p>
+                  <p className="crowd-line">{t('lifelineLoading')}</p>
                 )}
                 {lifelineDisplay?.noData && (
-                  <p className="crowd-line">Wala pang datos, bahala ka na</p>
+                  <p className="crowd-line">{t('lifelineNoData')}</p>
                 )}
                 {lifelineDisplay?.stats && (
                   <p className="crowd-line">
-                    Madla: {Math.round(lifelineDisplay.stats.taas / lifelineDisplay.stats.total * 100)}% TAAS
-                    &nbsp;·&nbsp;
-                    {Math.round(lifelineDisplay.stats.baba / lifelineDisplay.stats.total * 100)}% BABA
-                    &nbsp;({lifelineDisplay.stats.total})
+                    {t('lifelineStat',
+                      Math.round(lifelineDisplay.stats.taas / lifelineDisplay.stats.total * 100),
+                      Math.round(lifelineDisplay.stats.baba / lifelineDisplay.stats.total * 100),
+                      lifelineDisplay.stats.total
+                    )}
                   </p>
                 )}
               </div>
@@ -193,21 +192,24 @@ export default function DailyGame({ categories, onHome }) {
                 style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
               >
                 <p className={`feedback-text ${lastAnswer ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
-                  {lastAnswer ? 'Tama ka! 🎉' : 'Ay! Mali! 😬'}
+                  {lastAnswer ? t('feedbackCorrect') : t('feedbackWrong')}
                 </p>
 
                 {/* Crowd stats */}
                 <div style={{ minHeight: '1.5rem' }}>
                   {crowdStats !== null && (
                     crowdStats.total < 5
-                      ? <p className="crowd-line">Ikaw ang unang tumaya!</p>
+                      ? <p className="crowd-line">{t('crowdFirst')}</p>
                       : (
                         <p className="crowd-line">
-                          {Math.round(
-                            (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
-                            / crowdStats.total * 100
-                          )}% ng bayan pumili ng {currentPick === 'taas' ? 'TAAS' : 'BABA'}
-                          &nbsp;·&nbsp;{crowdStats.total} tumaya
+                          {t('crowdLine',
+                            Math.round(
+                              (currentPick === 'taas' ? crowdStats.taas : crowdStats.baba)
+                              / crowdStats.total * 100
+                            ),
+                            t(currentPick === 'taas' ? 'dirHigher' : 'dirLower'),
+                            crowdStats.total
+                          )}
                         </p>
                       )
                   )}
@@ -221,30 +223,30 @@ export default function DailyGame({ categories, onHome }) {
         {phase === 'done' && (
           <section className="flex flex-col items-center gap-5 text-center">
             <p className="done-tagline" style={{ letterSpacing: '0.35em' }}>
-              Tapos ka na!
+              {t('doneDone')}
             </p>
             <p className="big-score">
               {score}
               <span className="score-denom">/{total}</span>
             </p>
-            <div className="emoji-grid" aria-label="Mga sagot">
+            <div className="emoji-grid" aria-label={t('gridAria')}>
               {answers.map((a, i) => (
                 <span key={i}>{a ? '🟩' : '🟥'}</span>
               ))}
             </div>
-            <p className="done-tagline">Pwede na. Balik bukas!</p>
+            <p className="done-tagline">{t('doneBack')}</p>
             <div className="flex flex-col gap-2.5 w-full max-w-xs mt-1">
               <button className="action-btn" onClick={handleShare}>
-                {copied ? '✓ Nakopya!' : 'I-share ang Resulta'}
+                {copied ? t('shareCopied') : t('shareBtn')}
               </button>
-              <button className="ghost-btn" onClick={onHome}>Umuwi</button>
+              <button className="ghost-btn" onClick={onHome}>{t('goHomeBtn')}</button>
             </div>
           </section>
         )}
 
       </main>
 
-      {/* Fixed CTA bar — always on-screen regardless of viewport height */}
+      {/* Fixed CTA bar */}
       {(phase === 'playing' || phase === 'revealed') && current && (
         <div className="cta-bar">
           <div className="cta-bar-inner">
@@ -255,7 +257,7 @@ export default function DailyGame({ categories, onHome }) {
                   style={{ width: '100%' }}
                   onClick={handleNext}
                 >
-                  {idx + 1 < total ? 'Susunod →' : 'Tingnan ang Score'}
+                  {idx + 1 < total ? t('btnNext') : t('btnViewScore')}
                 </button>
             }
           </div>

@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { generateDailyPairs, checkGuess, getDayNumber, getTodayString } from '../utils/gameLogic';
+import { useLang } from '../i18n/strings';
 
 export function useDailyGame(categories) {
+  const { t } = useLang();
   const today = getTodayString();
   const dayNumber = getDayNumber(today);
   const pairs = useMemo(() => generateDailyPairs(categories, today, 10), [categories, today]);
@@ -46,8 +48,8 @@ export function useDailyGame(categories) {
 
   const shareText = useMemo(() => {
     const grid = answers.map((a) => (a ? '🟩' : '🟥')).join('');
-    return `TAYA! — Taya ng Araw #${dayNumber}\n${score}/${pairs.length}\n\n${grid}\n\nTaya ka na!`;
-  }, [answers, score, pairs.length, dayNumber]);
+    return t('shareText', dayNumber, score, pairs.length, grid);
+  }, [answers, score, pairs.length, dayNumber, t]);
 
   return {
     phase,

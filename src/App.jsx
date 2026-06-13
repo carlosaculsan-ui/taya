@@ -37,6 +37,11 @@ export default function App() {
       <div className="perya-sign w-full max-w-sm overflow-hidden">
         <BulbRow count={30} />
         <div className="px-5 py-5 text-center">
+          <img
+            src="/Taya!Logo.png"
+            alt="TAYA! logo"
+            style={{ width: '72px', height: '72px', objectFit: 'contain', margin: '0 auto 0.5rem' }}
+          />
           <h1
             className="f-bungee"
             style={{

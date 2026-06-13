@@ -8,10 +8,11 @@ import Banderitas from './Banderitas';
 import Confetti from './Confetti';
 import { useLang } from '../i18n/strings';
 import { checkGuess } from '../utils/gameLogic';
+import { pickBarkerLine } from '../data/barkerLines';
 import { getEndlessQuestionId, recordGuess } from '../utils/stats';
 
 export default function EndlessGame({ categories, onHome }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const { game, enabledCats, start, guess, next, toggleCat } = useEndlessGame(categories);
   const { phase, pair, streak, best, correct } = game;
 
@@ -30,6 +31,9 @@ export default function EndlessGame({ categories, onHome }) {
   const prevStreakRef = useRef(streak);
   const [ticketAnim, setTicketAnim] = useState(null);
 
+  // ── Barker lines ───────────────────────────────────────────────
+  const [barkerLine, setBarkerLine] = useState('');
+
   // Reset reveal state each time a new question starts
   useEffect(() => {
     if (phase === 'playing') {
@@ -37,6 +41,7 @@ export default function EndlessGame({ categories, onHome }) {
       setCrowdStats(null);
       setRevealComplete(false);
       setSusunodReady(false);
+      setBarkerLine('');
     }
   }, [phase]);
 
@@ -101,12 +106,22 @@ export default function EndlessGame({ categories, onHome }) {
   const handleGuess = useCallback(async (direction) => {
     if (!pair) return;
     setCurrentPick(direction);
-    guess(direction);
     const isCorrect = checkGuess(direction, pair.left, pair.right);
+    const newStreak = isCorrect ? streak + 1 : 0;
+    let pool;
+    if (isCorrect) {
+      if ([5, 10, 20].includes(newStreak)) pool = 'milestone';
+      else if (newStreak >= 5) pool = 'correctHigh';
+      else pool = 'correctLow';
+    } else {
+      pool = streak >= 5 ? 'wrongHigh' : 'wrongLow';
+    }
+    setBarkerLine(pickBarkerLine(pool, lang, pool === 'milestone' ? newStreak : undefined));
+    guess(direction);
     const qId = getEndlessQuestionId(pair);
     const stats = await recordGuess(qId, direction, isCorrect);
     setCrowdStats(stats);
-  }, [pair, guess]);
+  }, [pair, guess, streak, lang]);
 
   const handleNext = useCallback(() => {
     next();
@@ -185,7 +200,7 @@ export default function EndlessGame({ categories, onHome }) {
                 style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
               >
                 <p className={`feedback-text ${correct ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
-                  {correct ? t('feedbackCorrect') : t('feedbackWrong')}
+                  {barkerLine || (correct ? t('feedbackCorrect') : t('feedbackWrong'))}
                 </p>
 
                 {/* Crowd stats */}

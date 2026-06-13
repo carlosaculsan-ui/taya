@@ -56,6 +56,8 @@ const S = {
       `TAYA! — Taya ng Araw #${day}\n${score}/${total}\n\n${grid}\n\nTaya ka na!`,
     // Category labels (keyed by category id)
     catLabels: { presyo: 'Presyo', lungsod: 'Lungsod', isla: 'Isla', takilya: 'Takilya' },
+    // Card metric labels (keyed by category id)
+    metrics: { presyo: 'presyo ngayon', lungsod: 'populasyon (2020)', isla: 'lawak ng lupa (km²)', takilya: 'kita sa takilya (₱M)' },
   },
 
   en: {
@@ -113,6 +115,8 @@ const S = {
       `TAYA! — Daily Bet #${day}\n${score}/${total}\n\n${grid}\n\nYour turn to bet!`,
     // Category labels (keyed by category id)
     catLabels: { presyo: 'Prices', lungsod: 'Cities', isla: 'Islands', takilya: 'Box Office' },
+    // Card metric labels (keyed by category id)
+    metrics: { presyo: 'price today', lungsod: 'population (2020)', isla: 'land area (km²)', takilya: 'box office (₱M)' },
   },
 };
 

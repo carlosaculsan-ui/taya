@@ -7,9 +7,10 @@ import Banderitas from './Banderitas';
 import { useLang } from '../i18n/strings';
 import { checkGuess } from '../utils/gameLogic';
 import { getDailyQuestionId, recordGuess, fetchStats } from '../utils/stats';
+import { pickBarkerLine } from '../data/barkerLines';
 
 export default function DailyGame({ categories, onHome }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const { phase, current, idx, answers, score, total, dayNumber, guess, next, shareText } =
     useDailyGame(categories);
 
@@ -29,6 +30,10 @@ export default function DailyGame({ categories, onHome }) {
   const [revealComplete, setRevealComplete] = useState(false);
   const [susunodReady, setSusunodReady] = useState(false);
 
+  // ── Barker lines ───────────────────────────────────────────────
+  const [barkerLine, setBarkerLine] = useState('');
+  const [finalLine, setFinalLine] = useState('');
+
   // Reset per-question state when moving to a new question
   useEffect(() => {
     setCurrentPick(null);
@@ -36,6 +41,7 @@ export default function DailyGame({ categories, onHome }) {
     setLifelineDisplay(null);
     setRevealComplete(false);
     setSusunodReady(false);
+    setBarkerLine('');
   }, [idx]);
 
   // After guess, wait for scramble (450ms) before showing feedback
@@ -65,12 +71,13 @@ export default function DailyGame({ categories, onHome }) {
   const handleGuess = useCallback(async (direction) => {
     if (phase !== 'playing' || !current) return;
     setCurrentPick(direction);
-    guess(direction);
     const isCorrect = checkGuess(direction, current.left, current.right);
+    setBarkerLine(pickBarkerLine(isCorrect ? 'correctLow' : 'wrongLow', lang));
+    guess(direction);
     const qId = getDailyQuestionId(dayNumber, idx);
     const stats = await recordGuess(qId, direction, isCorrect);
     setCrowdStats(stats);
-  }, [phase, current, guess, dayNumber, idx]);
+  }, [phase, current, guess, dayNumber, idx, lang]);
 
   const handleLifeline = useCallback(async () => {
     if (lifelineUsed || lifelineDisplay) return;
@@ -90,6 +97,10 @@ export default function DailyGame({ categories, onHome }) {
     next();
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [next]);
+
+  useEffect(() => {
+    if (phase === 'done') setFinalLine(pickBarkerLine('dailyFinal', lang));
+  }, [phase, lang]);
 
   const handleShare = async () => {
     try {
@@ -192,7 +203,7 @@ export default function DailyGame({ categories, onHome }) {
                 style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
               >
                 <p className={`feedback-text ${lastAnswer ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
-                  {lastAnswer ? t('feedbackCorrect') : t('feedbackWrong')}
+                  {barkerLine || (lastAnswer ? t('feedbackCorrect') : t('feedbackWrong'))}
                 </p>
 
                 {/* Crowd stats */}
@@ -234,7 +245,7 @@ export default function DailyGame({ categories, onHome }) {
                 <span key={i}>{a ? '🟩' : '🟥'}</span>
               ))}
             </div>
-            <p className="done-tagline">{t('doneBack')}</p>
+            <p className="done-tagline">{finalLine || t('doneBack')}</p>
             <div className="flex flex-col gap-2.5 w-full max-w-xs mt-1">
               <button className="action-btn" onClick={handleShare}>
                 {copied ? t('shareCopied') : t('shareBtn')}

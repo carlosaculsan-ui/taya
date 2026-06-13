@@ -17,21 +17,21 @@
       "metric": "average price (PHP)",
       "formatter": "peso",
       "items": [
-        { "id": "presyo_itlog",            "name": "Itlog (1 pc, national avg)",       "value": 9.17,  "verified": true,  "asOf": "May 2026" },
-        { "id": "presyo_bigas_regular",    "name": "Bigas regular milled (1 kg)",      "value": 50.91, "verified": true,  "asOf": "May 2026" },
-        { "id": "presyo_bigas_wellmilled", "name": "Bigas well milled (1 kg)",         "value": 58.33, "verified": true,  "asOf": "May 2026" },
-        { "id": "presyo_galunggong",       "name": "Galunggong (1 kg)",                "value": 234,   "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_itlog",            "name": "Itlog (1 pc, national avg)",       "name_en": "Egg (1 pc, national avg)",                    "value": 9.17,  "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_bigas_regular",    "name": "Bigas regular milled (1 kg)",      "name_en": "Rice, regular milled (1 kg)",                  "value": 50.91, "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_bigas_wellmilled", "name": "Bigas well milled (1 kg)",         "name_en": "Rice, well milled (1 kg)",                     "value": 58.33, "verified": true,  "asOf": "May 2026" },
+        { "id": "presyo_galunggong",       "name": "Galunggong (1 kg)",                "name_en": "Round scad / galunggong (1 kg)",               "value": 234,   "verified": true,  "asOf": "May 2026" },
         { "id": "presyo_carrots",          "name": "Carrots (1 kg)",                   "value": 168,   "verified": true,  "asOf": "May 2026" },
-        { "id": "presyo_liempo",           "name": "Liempo (1 kg)",                    "value": 369,   "verified": true,  "asOf": "Apr 2026" },
+        { "id": "presyo_liempo",           "name": "Liempo (1 kg)",                    "name_en": "Pork belly / liempo (1 kg)",                   "value": 369,   "verified": true,  "asOf": "Apr 2026" },
         { "id": "presyo_jeepney_trad",     "name": "Jeepney base fare (traditional)",  "value": 13,    "verified": true,  "asOf": "Jun 2026", "note": "Mar 2026 hike to P14 suspended by Malacanang" },
         { "id": "presyo_jeepney_modern",   "name": "Modern jeepney base fare",         "value": 15,    "verified": true,  "asOf": "Jun 2026" },
         { "id": "presyo_mcdo_eggdesal",    "name": "McDo Cheesy Eggdesal (solo)",      "value": 82,    "verified": true,  "asOf": "Jun 2026" },
-        { "id": "presyo_gasolina",         "name": "Gasolina (1 L, est.)",             "value": 85,    "verified": false, "volatile": true, "note": "P75-95 range reported Mar 2026, swinging weekly due to oil crisis" },
+        { "id": "presyo_gasolina",         "name": "Gasolina (1 L, est.)",             "name_en": "Gasoline (1 L, est.)",                         "value": 85,    "verified": false, "volatile": true, "note": "P75-95 range reported Mar 2026, swinging weekly due to oil crisis" },
         { "id": "presyo_diesel",           "name": "Diesel (1 L, est.)",               "value": 100,   "verified": false, "volatile": true },
-        { "id": "presyo_coke_sakto",       "name": "Coke Sakto",                       "value": 17,    "verified": false },
-        { "id": "presyo_pancit_canton",    "name": "Pancit canton (1 pack)",           "value": 19,    "verified": false },
-        { "id": "presyo_pandesal",         "name": "Pandesal (1 pc, bakery)",          "value": 5,     "verified": false },
-        { "id": "presyo_kape_sachet",      "name": "3-in-1 kape sachet",              "value": 12,    "verified": false }
+        { "id": "presyo_coke_sakto",       "name": "Coke Sakto",                       "name_en": "Coke Sakto (small bottle)",                    "value": 17,    "verified": false },
+        { "id": "presyo_pancit_canton",    "name": "Pancit canton (1 pack)",           "name_en": "Instant noodles / pancit canton (1 pack)",     "value": 19,    "verified": false },
+        { "id": "presyo_pandesal",         "name": "Pandesal (1 pc, bakery)",          "name_en": "Pandesal / bread roll (1 pc)",                 "value": 5,     "verified": false },
+        { "id": "presyo_kape_sachet",      "name": "3-in-1 kape sachet",              "name_en": "3-in-1 instant coffee (1 sachet)",             "value": 12,    "verified": false }
       ]
     },
     {

@@ -3,7 +3,7 @@ import { useState, useCallback, createContext, useContext } from 'react';
 const S = {
   tl: {
     // Home
-    subtitle: 'Hulaan   \xb7   Iskor   \xb7   Magjaya',
+    subtitle: 'Hulaan   \xb7   Iskor   \xb7   Magsaya',
     modeDaily: '📅 Taya ng Araw',
     modeEndless: '∞ Endless Mode',
     // Navigation

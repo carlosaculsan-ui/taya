@@ -8,6 +8,10 @@ import { useLang } from '../i18n/strings';
 import { checkGuess } from '../utils/gameLogic';
 import { getDailyQuestionId, recordGuess, fetchStats } from '../utils/stats';
 import { pickBarkerLine } from '../data/barkerLines';
+import {
+  initAudio, isMuted, toggleMute as sfxToggleMute,
+  playPress, playReveal, playCorrect, playWrong,
+} from '../audio/sfx';
 
 export default function DailyGame({ categories, onHome }) {
   const { lang, t } = useLang();
@@ -34,6 +38,13 @@ export default function DailyGame({ categories, onHome }) {
   const [barkerLine, setBarkerLine] = useState('');
   const [finalLine, setFinalLine] = useState('');
 
+  // ── Mute toggle ────────────────────────────────────────────────
+  const [muted, setMuted] = useState(isMuted);
+  const handleMuteToggle = useCallback(() => {
+    initAudio();
+    setMuted(sfxToggleMute());
+  }, []);
+
   // Reset per-question state when moving to a new question
   useEffect(() => {
     setCurrentPick(null);
@@ -47,19 +58,21 @@ export default function DailyGame({ categories, onHome }) {
   // After guess, wait for scramble (450ms) before showing feedback
   useEffect(() => {
     if (phase !== 'revealed') return;
+    playReveal();
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timer = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
     return () => clearTimeout(timer);
   }, [phase]);
 
-  // After feedback appears, delay SUSUNOD by 400ms
+  const lastAnswer = answers[answers.length - 1];
+
+  // After feedback appears, play sound and delay SUSUNOD by 400ms
   useEffect(() => {
     if (!revealComplete) return;
+    if (lastAnswer) playCorrect(); else playWrong();
     const timer = setTimeout(() => setSusunodReady(true), 400);
     return () => clearTimeout(timer);
-  }, [revealComplete]);
-
-  const lastAnswer = answers[answers.length - 1];
+  }, [revealComplete, lastAnswer]);
 
   useEffect(() => {
     if (phase !== 'revealed') return;
@@ -70,6 +83,8 @@ export default function DailyGame({ categories, onHome }) {
 
   const handleGuess = useCallback(async (direction) => {
     if (phase !== 'playing' || !current) return;
+    initAudio();
+    playPress();
     setCurrentPick(direction);
     const isCorrect = checkGuess(direction, current.left, current.right);
     setBarkerLine(pickBarkerLine(isCorrect ? 'correctLow' : 'wrongLow', lang));
@@ -127,7 +142,14 @@ export default function DailyGame({ categories, onHome }) {
           >
             {t('dayLabel')} #{dayNumber}
           </span>
-          <span style={{ minWidth: '3rem' }} />
+          <button
+            className="mute-btn"
+            onClick={handleMuteToggle}
+            aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
+            aria-pressed={muted}
+          >
+            {muted ? '🔇' : '🔊'}
+          </button>
         </div>
       </header>
 
@@ -200,7 +222,7 @@ export default function DailyGame({ categories, onHome }) {
             {phase === 'revealed' && (
               <div
                 className="flex flex-col items-center gap-2"
-                style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
+                style={{ visibility: revealComplete ? 'visible' : 'hidden', minHeight: '8rem' }}
               >
                 <p className={`feedback-text ${lastAnswer ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
                   {barkerLine || (lastAnswer ? t('feedbackCorrect') : t('feedbackWrong'))}

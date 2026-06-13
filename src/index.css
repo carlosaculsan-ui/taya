@@ -344,6 +344,55 @@ body {
   text-decoration-color: rgba(255,243,176,0.55);
 }
 
+/* ── Language toggle (no strikethrough — just dimmed) ──────── */
+.lang-btn {
+  font-family: 'Paytone One', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.85rem;
+  min-height: 2.75rem;
+  border-radius: 3px;
+  border: 2px solid;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  line-height: 1.3;
+}
+.lang-btn[aria-pressed="true"] {
+  background: var(--yellow);
+  color: var(--card-text);
+  border-color: var(--yellow-dark);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+}
+.lang-btn[aria-pressed="false"] {
+  background: transparent;
+  color: rgba(255,243,176,0.38);
+  border-color: rgba(255,243,176,0.14);
+}
+.lang-btn:hover[aria-pressed="false"] {
+  color: rgba(255,243,176,0.72);
+  border-color: rgba(255,243,176,0.42);
+}
+
+/* ── Mute toggle ────────────────────────────────────────────── */
+.mute-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem 0.5rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  line-height: 1;
+  opacity: 0.68;
+  transition: opacity 0.1s;
+}
+.mute-btn:hover { opacity: 1; }
+.mute-btn[aria-pressed="true"] { opacity: 0.3; }
+
 /* ── VS badge (painted medallion) ───────────────────────────── */
 .vs-badge {
   font-family: 'Bungee', cursive;

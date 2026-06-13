@@ -9,6 +9,11 @@ import Confetti from './Confetti';
 import { useLang } from '../i18n/strings';
 import { checkGuess } from '../utils/gameLogic';
 import { pickBarkerLine } from '../data/barkerLines';
+import {
+  initAudio, isMuted, toggleMute as sfxToggleMute,
+  playPress, playReveal, playCorrect, playWrong, playMilestone,
+  playGameoverLow, playGameoverHigh,
+} from '../audio/sfx';
 import { getEndlessQuestionId, recordGuess } from '../utils/stats';
 
 export default function EndlessGame({ categories, onHome }) {
@@ -34,6 +39,13 @@ export default function EndlessGame({ categories, onHome }) {
   // ── Barker lines ───────────────────────────────────────────────
   const [barkerLine, setBarkerLine] = useState('');
 
+  // ── Mute toggle ────────────────────────────────────────────────
+  const [muted, setMuted] = useState(isMuted);
+  const handleMuteToggle = useCallback(() => {
+    initAudio();
+    setMuted(sfxToggleMute());
+  }, []);
+
   // Reset reveal state each time a new question starts
   useEffect(() => {
     if (phase === 'playing') {
@@ -48,17 +60,23 @@ export default function EndlessGame({ categories, onHome }) {
   // Wait for card scramble (450ms) before showing feedback
   useEffect(() => {
     if (phase !== 'revealed') return;
+    playReveal();
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const timer = setTimeout(() => setRevealComplete(true), prefersReduced ? 0 : 450);
     return () => clearTimeout(timer);
   }, [phase]);
 
-  // After feedback appears, delay Next button by 400ms
+  // After feedback appears, play sound and delay Next button by 400ms
   useEffect(() => {
     if (!revealComplete) return;
+    if (correct) {
+      if (![5, 10, 20].includes(streak)) playCorrect(); // milestone already fired with confetti
+    } else {
+      playWrong();
+    }
     const timer = setTimeout(() => setSusunodReady(true), 400);
     return () => clearTimeout(timer);
-  }, [revealComplete]);
+  }, [revealComplete, correct, streak]);
 
   // Ticket stamp on increment, shake on reset
   useEffect(() => {
@@ -83,9 +101,12 @@ export default function EndlessGame({ categories, onHome }) {
     if (correct) {
       setBulbState('chasing');
       timers.push(setTimeout(() => setBulbState('idle'), 750));
-      if ([5, 10, 20].includes(streak) && !noMotion) {
-        setShowConfetti(true);
-        timers.push(setTimeout(() => setShowConfetti(false), 2400));
+      if ([5, 10, 20].includes(streak)) {
+        playMilestone(); // audio is independent of motion preference
+        if (!noMotion) {
+          setShowConfetti(true);
+          timers.push(setTimeout(() => setShowConfetti(false), 2400));
+        }
       }
     } else {
       setBulbState('dark');
@@ -94,17 +115,25 @@ export default function EndlessGame({ categories, onHome }) {
     return () => timers.forEach(clearTimeout);
   }, [phase, correct, streak]);
 
-  // Celebration confetti for high-streak game-over
+  // Gameover: confetti + sound, branched by streak
   useEffect(() => {
-    if (phase !== 'gameover' || streak < 5) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setShowConfetti(true);
-    const timer = setTimeout(() => setShowConfetti(false), 2400);
-    return () => clearTimeout(timer);
+    if (phase !== 'gameover') return;
+    if (streak >= 5) {
+      playGameoverHigh();
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setShowConfetti(true);
+        const timer = setTimeout(() => setShowConfetti(false), 2400);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      playGameoverLow();
+    }
   }, [phase, streak]);
 
   const handleGuess = useCallback(async (direction) => {
     if (!pair) return;
+    initAudio();
+    playPress();
     setCurrentPick(direction);
     const isCorrect = checkGuess(direction, pair.left, pair.right);
     const newStreak = isCorrect ? streak + 1 : 0;
@@ -138,7 +167,17 @@ export default function EndlessGame({ categories, onHome }) {
       <header className="perya-header">
         <BulbRow state={bulbState} count={32} />
         <div className="flex items-center justify-between px-4 py-2">
-          <button className="nav-back" onClick={onHome}>{t('goHome')}</button>
+          <div className="flex items-center gap-1">
+            <button className="nav-back" onClick={onHome}>{t('goHome')}</button>
+            <button
+              className="mute-btn"
+              onClick={handleMuteToggle}
+              aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
+              aria-pressed={muted}
+            >
+              {muted ? '🔇' : '🔊'}
+            </button>
+          </div>
           <span
             className="f-bungee"
             style={{ color: 'var(--yellow)', fontSize: '0.82rem', letterSpacing: '0.14em' }}
@@ -197,7 +236,7 @@ export default function EndlessGame({ categories, onHome }) {
             {phase === 'revealed' && (
               <div
                 className="flex flex-col items-center gap-2"
-                style={{ visibility: revealComplete ? 'visible' : 'hidden' }}
+                style={{ visibility: revealComplete ? 'visible' : 'hidden', minHeight: '8rem' }}
               >
                 <p className={`feedback-text ${correct ? 'correct' : `wrong${revealComplete ? ' animate' : ''}`}`}>
                   {barkerLine || (correct ? t('feedbackCorrect') : t('feedbackWrong'))}

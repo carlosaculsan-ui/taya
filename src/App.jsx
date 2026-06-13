@@ -6,12 +6,19 @@ import categoriesData from './data/taas-o-baba-dataset.json';
 import { getDayNumber, getTodayString } from './utils/gameLogic';
 import { seedDayIfEmpty } from './utils/stats';
 import { useLang } from './i18n/strings';
+import { initAudio, isMuted, toggleMute as sfxToggleMute } from './audio/sfx';
 
 const { categories } = categoriesData;
 
 export default function App() {
   const [mode, setMode] = useState(null);
   const { lang, t, setLang } = useLang();
+  const [muted, setMuted] = useState(isMuted);
+
+  const handleMuteToggle = () => {
+    initAudio();
+    setMuted(sfxToggleMute());
+  };
 
   useEffect(() => {
     seedDayIfEmpty(getDayNumber(getTodayString()));
@@ -54,29 +61,29 @@ export default function App() {
 
       {/* Mode selection */}
       <nav className="flex flex-col gap-3 w-full max-w-xs">
-        <button className="home-btn" onClick={() => setMode('daily')}>
+        <button className="home-btn" onClick={() => { initAudio(); setMode('daily'); }}>
           {t('modeDaily')}
         </button>
-        <button className="home-btn" onClick={() => setMode('endless')}>
+        <button className="home-btn" onClick={() => { initAudio(); setMode('endless'); }}>
           {t('modeEndless')}
         </button>
       </nav>
 
-      {/* Language toggle */}
-      <div className="flex gap-2 justify-center">
-        <button
-          className="booth-sign"
-          aria-pressed={lang === 'tl'}
-          onClick={() => setLang('tl')}
-        >
+      {/* Language toggle + mute */}
+      <div className="flex gap-2 justify-center items-center">
+        <button className="lang-btn" aria-pressed={lang === 'tl'} onClick={() => setLang('tl')}>
           TAGALOG
         </button>
-        <button
-          className="booth-sign"
-          aria-pressed={lang === 'en'}
-          onClick={() => setLang('en')}
-        >
+        <button className="lang-btn" aria-pressed={lang === 'en'} onClick={() => setLang('en')}>
           ENGLISH
+        </button>
+        <button
+          className="mute-btn"
+          onClick={handleMuteToggle}
+          aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
+          aria-pressed={muted}
+        >
+          {muted ? '🔇' : '🔊'}
         </button>
       </div>
     </main>
